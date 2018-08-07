@@ -1,4 +1,4 @@
-### 基本命令
+﻿### 基本命令
 
 #### 本地连接
 
@@ -37,13 +37,13 @@ redis-cli -h host -p port -a password
 | 15   | [RENAMENX key newkey](http://www.runoob.com/redis/keys-renamenx.html) 仅当 newkey 不存在时，将 key 改名为 newkey 。 |
 | 16   | [TYPE key](http://www.runoob.com/redis/keys-type.html) 返回 key 所储存的值的类型。 |
 
-##数据类型
+## 数据类型
 
-###String
+### String
 
-####set get
+#### set get
 
-#####赋值取值
+##### 赋值取值
 
 **set** **get**
 
@@ -52,9 +52,9 @@ SET name "runoob"
 GET name
 ```
 
-#####返回旧值
+##### 返回旧值
 
-**Getset **
+**Getset**
 
 设置一个值,并返回旧值
 
@@ -63,7 +63,7 @@ getset key a	//返回nil
 getset key b	//返回"a"
 ```
 
-#####设定指定位数的bit
+##### 设定指定位数的bit
 
 **SETBIT key offset value**
 
@@ -71,13 +71,13 @@ getset key b	//返回"a"
 
 #####获取指定位数的bit
 
-**Getbit **
+**Getbit**
 
 返回:字符串值指定偏移量上的位(bit)。(二进制)
 
 参考https://www.zhihu.com/question/27672245
 
-#####设置多个key value
+##### 设置多个key value
 
 **mset**
 
@@ -85,7 +85,7 @@ getset key b	//返回"a"
 
 `mset key1 'value1' key2 'value2'`
 
-#####获取多个key value
+##### 获取多个key value
 
 **mget**
 
@@ -103,9 +103,9 @@ getset key b	//返回"a"
 
 同时设定多个key value 所有给定的key必须不存在
 
-####有效期
+#### 有效期
 
-#####给值和有效期(秒)
+##### 给值和有效期(秒)
 
 **setex**
 
@@ -119,7 +119,7 @@ SETEX key 秒数 值
 
 **psetex**(同上)
 
-####字符串操作
+#### 字符串操作
 
 ##### 截取字符串
 
@@ -130,9 +130,9 @@ SET mykey "This is my test key"
 GETRANGE mykey 0 3	//"This"
 ```
 
-#####覆盖字符串到指定位置
+##### 覆盖字符串到指定位置
 
-**SETRANGE **
+**SETRANGE**
 
 覆盖给定key所储存的字符串值,覆盖位置从offset开始
 
@@ -153,15 +153,15 @@ append key 'redis'
 get key //'hello redis'
 ```
 
-#####字符串长度
+##### 字符串长度
 
 **strlen** key
 
 返回字符串长度
 
-####加减
+#### 加减
 
-#####自增
+##### 自增
 
 **lncr**
 
@@ -172,7 +172,7 @@ set key 1
 lncr key	//2
 ```
 
-#####增加给定量(整型)
+##### 增加给定量(整型)
 
 **incrby**
 
@@ -196,15 +196,17 @@ get key 	//70
 
 **decrby**(同上)
 
-###哈希
 
-####get set
 
-#####获取指定字段的值
+### 哈希
+
+#### get set
+
+##### 获取指定字段的值
 
 **hget** key field
 
-#####获取key中所有字段和值
+##### 获取key中所有字段和值
 
 **hgetall** key
 
@@ -216,7 +218,7 @@ get key 	//70
 
 **hvals** key
 
-#####获取key中字段数量
+##### 获取key中字段数量
 
 **hlen** key
 
@@ -236,6 +238,8 @@ get key 	//70
 
 **hsetnx** key field value
 
+
+
  #### 其他
 
 ##### 删除字段
@@ -248,11 +252,13 @@ hdel key 字段1 字段2
 
 ##### 字段是否存在
 
-**hexists **key field
+**hexists** key field
 
 ##### 迭代哈希表中的键值对
 
 HSCAN key cursor [MATCH pattern] .[COUNT count]   (还没看懂)
+
+
 
 #### 加减
 
@@ -260,11 +266,11 @@ HSCAN key cursor [MATCH pattern] .[COUNT count]   (还没看懂)
 
 **hincrby** key field 5(增量)
 
-#####加(浮点型)
+##### 加(浮点型)
 
 hincrbyfloat key field 增量(可以为复数,相当于减法)
 
-###列表(list)
+### 列表(list)
 
 #### get
 
@@ -306,7 +312,9 @@ Rpop 命令用于移除并返回列表的最后一个元素 , 当列表不存在
 
 **LLen** key
 
-####set
+
+
+#### add
 
 ##### 插入元素到头部 (列表须存在)
 
@@ -343,7 +351,9 @@ Linsert key before 'world' 'my'
 
 **Lset** key index value
 
-####del
+
+
+#### del
 
 ##### 弹出一个元素插入另一个list (阻塞)
 
@@ -361,23 +371,25 @@ Linsert key before 'world' 'my'
 
 个数为负数时 , 从表尾向表头检索
 
-#####截取指定区间的元素
+##### 截取指定区间的元素
 
 **Ltrim** key strat stop	(返回值为该区间的元素)
 
 不在指定区间内的元素将会被删除
 
-#####移出最后一个元素到另一个列表
+##### 移出最后一个元素到另一个列表
 
-**Rpoplpush ** key otherkey	(返回值为最后一个元素的值)
+**Rpoplpush**  key otherkey	(返回值为最后一个元素的值)
 
-###无序集合(Set)
 
-特点 : 没有重复值
+
+### 无序集合(Set)
+
+Set是string类型的无序集合 (不允许重复)
 
 #### get
 
-#####获取集合长度
+##### 获取集合长度
 
 **Scard** key
 
@@ -430,7 +442,7 @@ SDIFF key1 key2 key3 = {b,d}
 
 
 
-#### set
+#### add
 
 ##### 添加一/多个成员
 
@@ -452,23 +464,125 @@ SDIFF key1 key2 key3 = {b,d}
 
 **Srem** key member1 [member2]
 
-#### 有序集合(zset)
+
+
+### 有序集合(zset)
 
 zset是string类型的有序集合 (不允许重复)
 
 每个元素都要关联一个double类型的分数。redis正是通过分数来为集合中的成员进行从小到大的排序。(分数可以重复)
 
-**zadd**  **zrangebyscore**
+#### get
+
+##### 获取元素个数
+
+**Zcard** key
+
+##### 获取指定分数区间的元素个数
+
+**Zcount** key min max
+
+##### 获取交集并存储在新的集合中
+
+**ZinterStore** dbkey numkeys(有几个key就写几)  key1  key2.. 
+
+新的集合中元素的分数值是给定集下该元素分数值之和
+
+##### 获取并集并存储在新的集合中
+
+**ZunionStore**  dbkey numkeys(有几个key就写几)  key1  key2.. 
+
+##### 获取指定区间元素数量(根据字典)
+
+**ZlexCount** key min max
 
 ```sql
-zadd runoob 0 redis
-zadd runoob 1 mongodb
-zadd runoob 0.1 rabitmq
-zadd runoob 0 rabitmq	//无效,重复
-
-ZRANGEBYSCORE runoob 0 1 //"redis" "rabitmq" "mongodb" 
-zrange runoob  0 1 		//"redis" "rabitmq" 输出指定个数
+ZADD myzset 0 a 0 b 0 c 0 d 0 e
+ZADD myzset 0 f 0 g
+ZLEXCOUNT myzset - +	//结果为7
+ZLEXCOUNT myzset [b [f	//结果为5
 ```
+
+##### 获取指定区间元素(根据字典)
+
+**ZrangeByLex** key min max  [限制偏移个数]
+
+##### 获取指定区间元素(根据分数)
+
+**ZrangeByScore**  key  min  max  [withScore].[Limit]	
+
+//第一个可选参数为挑选带有分数的元素(并返回所带分数) , 第二个参数限制偏移个数
+
+```sql
+ZRANGEBYSCORE key (5 10	//符合条件 5 < score <= 10 的成员
+//默认闭区间 , 可选开区间 '('
+```
+
+##### 获取指定区间元素 (根据索引)
+
+**Zrange** key strat stop [withscores]	//带上可选参数,则只返回有分数的元素
+
+下标参数 start 和 stop 以 0 表示有序集第一个成员，以 -1 表示有序集最后一个成员
+
+##### 获取指定区间元素(根据索引)
+
+根据分数排序
+
+**ZRange** key strat stop [withScore]		//递增排列
+
+**ZrevRange** key strat stop [withScore]	//递减排列
+
+##### 获取元素索引
+
+**Zrank** key member
+
+##### 获取元素分数值
+
+**Zscore** key member
+
+##### 获取指定区间元素排名
+
+**ZrevRank** key member	//递减
+
+**ZRank** key member		//递增
+
+##### 获取匹配通配符的元素(迭代)
+
+ ZSCAN key cursor [MATCH pattern] . [COUNT count]
+
+
+
+#### add
+
+##### 添加一个或多个元素,或者更新元素分数
+
+**Zadd** key 分数 value
+
+##### 给指定元素增加分数
+
+**Zincrby** key 增加几分 value
+
+
+
+#### remove
+
+##### 移除一个或多个元素
+
+**Zrem** key member [member]
+
+##### 移除给定区间的元素(根据字典)
+
+**ZremRangeByLex**  key  min  max
+
+##### 移除给定区间的元素(根据下标)
+
+**ZremRangeByRank** key strat stop
+
+##### 移除给定区间的元素(根据分数)
+
+**ZremRangeByScore** key min max [withScore]
+
+
 
 ### 应用场景
 
