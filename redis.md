@@ -50,13 +50,13 @@ redis-cli -h host -p port -a password
 **set** **get**
 
 ```sql
-SET name "runoob"
-GET name
+SET key value
+GET key
 ```
 
 ##### 返回旧值
 
-**Getset**
+**Getset** key  value
 
 设置一个值,并返回旧值
 
@@ -73,7 +73,7 @@ getset key b	//返回"a"
 
 ##### 获取指定位数的bit
 
-**Getbit**
+**Getbit** key offset value
 
 返回:字符串值指定偏移量上的位(bit)。(二进制)
 
@@ -81,7 +81,7 @@ getset key b	//返回"a"
 
 ##### 设置多个key value
 
-**mset**
+**mset** key1 [key2]
 
 同时设定一个或多个key value
 
@@ -89,19 +89,19 @@ getset key b	//返回"a"
 
 ##### 获取多个key value
 
-**mget**
+**mget** key [key2]
 
 获取所有(一个或多个)给定 key 的值。
 
 ##### 当key不存在设置值
 
-**setnx**
+**setnx** key value
 
 只有在 key 不存在时设置 key 的值。
 
 ##### 设置多个key value (key不存在)
 
-**msetnx**
+**msetnx** key value [key value]
 
 同时设定多个key value 所有给定的key必须不存在
 
@@ -109,7 +109,7 @@ getset key b	//返回"a"
 
 ##### 给值和有效期(秒)
 
-**setex**
+**setex** key seconds value
 
 为指定的 key 设置值及其过期时间。(如果key已存在会被替换)
 
@@ -119,7 +119,7 @@ SETEX key 秒数 值
 
 ##### 给值和有效期(毫秒)
 
-**psetex**(同上)
+**psetex** key milliseconds value 
 
 #### 字符串操作
 
@@ -134,11 +134,9 @@ GETRANGE mykey 0 3	//"This"
 
 ##### 覆盖字符串到指定位置
 
-**SETRANGE**
+**SETRANGE** key offset value
 
 覆盖给定key所储存的字符串值,覆盖位置从offset开始
-
-`setrange key offset value`
 
 ```sql
 SET key1 "Hello World"
@@ -147,7 +145,7 @@ SETRANGE key1 6 "Redis"	//"Hello Redis"
 
 ##### 拼接字符串到末尾
 
-**append**
+**append** key value
 
 ```sql
 append key 'hello'
@@ -165,7 +163,7 @@ get key //'hello redis'
 
 ##### 自增
 
-**lncr**
+**lncr** key
 
 key不存在默认为0
 
@@ -176,7 +174,7 @@ lncr key	//2
 
 ##### 增加给定量(整型)
 
-**incrby**
+**incrby** key
 
 key不存在默认为0
 
