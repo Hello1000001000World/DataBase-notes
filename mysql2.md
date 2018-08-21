@@ -109,14 +109,6 @@ DATE_FORMAT(Now(),'%Y-%m-%d') as date	//返回2018-08-18
 
 
 
-## 查询
-
-
-
-
-
-
-
 
 
 ## 数据类型
@@ -171,15 +163,182 @@ int（3）显示结果为010
 
 *即便 DATETIME 和 TIMESTAMP 返回相同的格式，它们的工作方式很不同。在 INSERT 或 UPDATE 查询中，TIMESTAMP 自动把自身设置为当前的日期和时间。TIMESTAMP 也接受不同的格式，比如 YYYYMMDDHHMMSS、YYMMDDHHMMSS、YYYYMMDD 或 YYMMDD。
 
+## 插入
+
+**insert into**
+
+### 实例
+
+```sql
+INSERT INTO 表名 (列名1, 列名2, 列名3, ...)
+VALUES ('值1','值2','值3',...);
+```
 
 
 
+## 删除
+
+**Delete** from 表名  Where 条件语句
+
+### 实例
+
+```sql
+DELETE FROM Websites
+WHERE name='百度' AND country='CN';
+```
 
 
 
+## 更改
+
+**UPDATE 表名 Set** 语句用于更新表中的记录。
+
+### 实例
+
+```sql
+UPDATE Websites 
+SET alexa='5000', country='USA' 
+WHERE name='菜鸟教程';
+//将Websites表中 name='菜鸟教程' 的列alexa改为'5000', country改为'USA' 
+```
 
 
 
+## 查询
+
+**SELECT 列名 FROM 表名 [where]\[LIMIT N][offset M]**
+
+- 使用星号（*），SELECT语句会返回表的所有字段数据
+- WHERE 语句来包含任何条件。
+  - 使用 AND 或者 OR 指定一个或多个条件。
+  - 操作符 "<="  ">="  "="  "!=" "<" ">"
+  - WHERE BINARY 区分大小写
+- LIMIT 属性来设定返回的记录数。
+- OFFSET指定SELECT语句开始查询的数据偏移量。默认情况下偏移量为0。
+
+### where子句
+
+#### 区分大小写
+
+**WHERE BINARY** 
+
+##### 实例
+
+```sql
+SELECT * from runoob_tbl WHERE BINARY runoob_author='runoob.com';
+//无数据
+SELECT * from runoob_tbl WHERE BINARY runoob_author='RUNOOB.COM';
++-----------+---------------+---------------+-----------------+
+| runoob_id | runoob_title  | runoob_author | submission_date |
++-----------+---------------+---------------+-----------------+
+| 3         | JAVA 教程   | RUNOOB.COM    | 2016-05-06      |
+| 4         | 学习 Python | RUNOOB.COM    | 2016-03-06      |
++-----------+---------------+---------------+-----------------+
+```
+
+#### like 模糊匹配
+
+##### 实例
+
+```sql
+SELECT * from runoob_tbl  WHERE runoob_author LIKE '%COM';
++-----------+---------------+---------------+-----------------+
+| runoob_id | runoob_title  | runoob_author | submission_date |
++-----------+---------------+---------------+-----------------+
+| 3         | 学习 Java   | RUNOOB.COM    | 2015-05-01      |
+| 4         | 学习 Python | RUNOOB.COM    | 2016-03-06      |
++-----------+---------------+---------------+-----------------+
+'%a'     //以a结尾的数据
+'a%'     //以a开头的数据
+'%a%'    //含有a的数据
+'_a_'    //三位且中间字母是a的
+'_a'     //两位且结尾字母是a的
+'a_'     //两位且开头字母是a的
+```
+
+
+
+### 结果集操作
+
+#### 多个结果集合成一个
+
+**union**  		结果集去掉重复数据
+
+**union all** 	结果集全部数据
+
+##### 实例
+
+```sql
+SELECT country FROM Websites
+UNION
+SELECT country FROM apps
+
+//返回Websites表和apps表的country列
+```
+
+#### 结果集排序
+
+**order by**
+
+##### 实例
+
+```sql
+SELECT * from tab ORDER BY a_data ASC;	//升序
+SELECT * from tab ORDER BY a_data DESC;	//降序
+```
+
+#### 相同字段分组
+
+SELECT  列名,[函数()]  FROM  表名 **group by**  列名
+
++ 结果集将列名相同的数据分组
++ 函数为可选参数 , 可以操作分组结果集数据
++ 汇总数据WITH ROLLUP (可选)
+
+##### 实例
+
+```sql
++----+--------+---------------------+--------+
+| id | name   | date                | singin |
++----+--------+---------------------+--------+
+|  1 | 小明 | 2016-04-22 15:25:33 |      1 |
+|  2 | 小王 | 2016-04-20 15:25:47 |      3 |
+|  3 | 小丽 | 2016-04-19 15:26:02 |      2 |
+|  4 | 小王 | 2016-04-07 15:26:14 |      4 |
+|  5 | 小明 | 2016-04-11 15:26:40 |      4 |
+|  6 | 小明 | 2016-04-04 15:26:54 |      2 |
++----+--------+---------------------+--------+
+SELECT name, COUNT(*) FROM  tb group by name;
+//结果为
++--------+----------+
+| name   | COUNT(*) |
++--------+----------+
+| 小丽 |        1 |
+| 小明 |        3 |
+| 小王 |        2 |
++--------+----------+
+SELECT name, COUNT(*) FROM  tb group by name WITH ROLLUP;	//加可选参数WITH ROLLUP
+//结果为
++--------+----------+
+| name   | COUNT(*) |
++--------+----------+
+| 小丽 |        1 |
+| 小明 |        3 |
+| 小王 |        2 |
+| NULL |	   6 |
++--------+----------+
+SELECT coalesce(name, '总数'), COUNT(*) FROM  tb group by name WITH ROLLUP;	//给NULL起个名字
+//结果为
++--------+----------+
+| name   | COUNT(*) |
++--------+----------+
+| 小丽 |        1 |
+| 小明 |        3 |
+| 小王 |        2 |
+| 总数 |	      6	|
++--------+----------+
+
+```
 
 
 
