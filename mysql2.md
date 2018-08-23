@@ -1,3 +1,5 @@
+
+
 ### 函数
 
 #### 匹配的个数
@@ -107,7 +109,7 @@ DATE_FORMAT(Now(),'%Y-%m-%d') as date	//返回2018-08-18
 
 ##### having
 
-
+当使用聚合函数时 , 需使用 having 代替 where
 
 
 
@@ -256,6 +258,81 @@ SELECT * from runoob_tbl  WHERE runoob_author LIKE '%COM';
 'a_'     //两位且开头字母是a的
 ```
 
+#### REGEXP 正则匹配
+
+##### 实例
+
+```sql
+SELECT * from runoob_tbl  WHERE runoob_author REGEXP '^st';
+```
+
+| 模式       | 描述                                                         |
+| ---------- | ------------------------------------------------------------ |
+| ^          | 匹配输入字符串的开始位置。如果设置了 RegExp 对象的 Multiline 属性，^ 也匹配 '\n' 或 '\r' 之后的位置。 |
+| $          | 匹配输入字符串的结束位置。如果设置了RegExp 对象的 Multiline 属性，$ 也匹配 '\n' 或 '\r' 之前的位置。 |
+| .          | 匹配除 "\n" 之外的任何单个字符。要匹配包括 '\n' 在内的任何字符，请使用象 '[.\n]' 的模式。 |
+| [...]      | 字符集合。匹配所包含的任意一个字符。例如， '[abc]' 可以匹配 "plain" 中的 'a'。 |
+| [^...]     | 负值字符集合。匹配未包含的任意字符。例如， '[^abc]' 可以匹配 "plain" 中的'p'。 |
+| p1\|p2\|p3 | 匹配 p1 或 p2 或 p3。例如，'z\|food' 能匹配 "z" 或 "food"。'(z\|f)ood' 则匹配 "zood" 或 "food"。 |
+| *          | 匹配前面的子表达式零次或多次。例如，zo* 能匹配 "z" 以及 "zoo"。* 等价于{0,}。 |
+| +          | 匹配前面的子表达式一次或多次。例如，'zo+' 能匹配 "zo" 以及 "zoo"，但不能匹配 "z"。+ 等价于 {1,}。 |
+| {n}        | n 是一个非负整数。匹配确定的 n 次。例如，'o{2}' 不能匹配 "Bob" 中的 'o'，但是能匹配 "food" 中的两个 o。 |
+| {n,m}      | m 和 n 均为非负整数，其中n <= m。最少匹配 n 次且最多匹配 m 次。 |
+
+####  join  联表查询
+
+- **INNER JOIN（内连接,或等值连接）**：获取两个表中字段匹配关系的记录。(可省略inner)
+- **LEFT JOIN（左连接）：**获取左表所有记录，即使右表没有对应匹配的记录。
+- **RIGHT JOIN（右连接）：** 与 LEFT JOIN 相反，用于获取右表所有记录，即使左表没有对应匹配的记录。
+- 使用以上命令时, where 应换成 on
+
+##### 实例
+
+```sql
+A表
++---------------+--------------+
+| runoob_author | runoob_count |
++---------------+--------------+
+| 菜鸟教程  | 10           |
+| RUNOOB.COM    | 20           |
+| Google        | 22           |
++---------------+--------------+
+B表
++-----------+---------------+---------------+-----------------+
+| runoob_id | runoob_title  | runoob_author | submission_date |
++-----------+---------------+---------------+-----------------+
+| 1         | 学习 PHP    | 菜鸟教程  | 2017-04-12      |
+| 2         | 学习 MySQL  | 菜鸟教程  | 2017-04-12      |
+| 3         | 学习 Java   | RUNOOB.COM    | 2015-05-01      |
+| 4         | 学习 Python | RUNOOB.COM    | 2016-03-06      |
+| 5         | 学习 C      | FK            | 2017-04-05      |
++-----------+---------------+---------------+-----------------+
+```
+
+```sql
+SELECT a.runoob_id, a.runoob_author, b.runoob_count FROM runoob_tbl a INNER JOIN tcount_tbl b ON a.runoob_author = b.runoob_author;
+与下面语句等价,使用where省略 inner join
+SELECT a.runoob_id, a.runoob_author, b.runoob_count FROM runoob_tbl a, tcount_tbl b WHERE a.runoob_author = b.runoob_author;
+```
+
+### null值查询
+
+查询null值不可以使用 = 和 !=
+
+- **IS NULL:** 当列的值是 NULL,此运算符返回 true。
+- **IS NOT NULL:** 当列的值不为 NULL, 运算符返回 true。
+- **<=>:** 比较操作符（不同于=运算符），当比较的的两个值为 NULL 时返回 true。
+
+#### 实例
+
+```sql
+SELECT * FROM runoob_test_tbl WHERE runoob_count = NULL;	//不起作用
+SELECT * FROM runoob_test_tbl WHERE runoob_count != NULL;	//不起作用
+//下面为正确写法
+SELECT * FROM runoob_test_tbl WHERE runoob_count IS NULL;
+SELECT * from runoob_test_tbl WHERE runoob_count IS NOT NULL;
+```
+
 
 
 ### 结果集操作
@@ -341,4 +418,172 @@ SELECT coalesce(name, '总数'), COUNT(*) FROM  tb group by name WITH ROLLUP;	//
 ```
 
 
+
+### 事务(批量增删改)
+
+保证成批的 SQL 语句要么全部执行，要么全部不执行。
+
+数据表需要使用innodb引擎
+`CREATE TABLE runoob_transaction_test( id int(5)) engine=innodb; ` //创建数据表
+
+#### 基本操作
+
+```sql
+mysql> begin;  //开始事务
+//成批sql语句
+mysql> insert into runoob_transaction_test value(1);
+mysql> insert into runoob_transaction_test value(2);
+mysql> insert into runoob_transaction_test value(3);
+mysql> insert into runoob_transaction_test value(4);
+
+rollback;	//如果有问题,回滚,上面语句不执行
+commit; 	//提交事务,无法回滚
+```
+
+### ALTER (增删改 表名,列名)
+
+#### 增删改列
+
+```sql
+ ALTER TABLE 表名  DROP 列名;			   		//删除列
+ ALTER TABLE 表名  ADD 列名 数据类型;			 //增加列
+ ALTER TABLE 表名 MODIFY 列名 CHAR(10);			//修改列数据类型
+ ALTER TABLE 表名 CHANGE 列名 新列名 数据类型;	   //修改列名和数据类型
+```
+
+#### 列默认值
+
+```sql
+ALTER TABLE 表名 ALTER 列名 SET DEFAULT 1000;		//修改字段默认值
+ALTER TABLE 表名 ALTER 列名 DROP DEFAULT;			//删除字段默认值
+ALTER TABLE 表名 MODIFY 列名 int NOT NULL DEFAULT 100;		//规定非空和默认值
+ALTER TABLE 表名 drop foreign key 列名;				//删除外键
+```
+
+#### 改表
+
+```sql
+ALTER TABLE 表名 RENAME TO 新表名;			//修改表名
+SHOW TABLE STATUS			 	 //显示所有表属性
+SHOW TABLE STATUS like "表名"		//显示该表属性
+ALTER TABLE 表名 属性名 = 属性;	//修改表属性
+ALTER TABLE 表名 ENGINE = MYISAM; //例
+```
+
+## 表操作
+
+### 临时表
+
+临时表只在当前连接可见，当关闭连接时，Mysql会自动删除表并释放所有空间。
+
+#### 实例
+
+```sql
+CREATE TEMPORARY TABLE 表名 (字段);		//创建临时表
+DROP TABLE 表名;						//删除表
+```
+
+### 复制表
+
+#### 实例
+
+```sql
+//第一步读取表属性
+SHOW CREATE TABLE 表名 \G;			
+//结果集为
+Table: 表名
+Create Table: CREATE TABLE `表名` (
+    字段名:数据类型
+) 引擎
+
+//第二步复制上面结果集[1],创建新表
+CREATE TABLE `新表名` (
+    字段名:数据类型
+)引擎
+
+//第三步复制数据
+INSERT INTO 新表(字段1,字段2...) SELECT 字段1,字段2... FROM 旧表;
+```
+
+另外一种方法
+
+```sql
+CREATE TABLE 新表 LIKE 旧表;
+INSERT INTO 新表 SELECT * FROM 旧表;
+```
+
+### 元数据
+
+| 命令               | 描述                      |
+| ------------------ | ------------------------- |
+| SELECT VERSION( )  | 服务器版本信息            |
+| SELECT DATABASE( ) | 当前数据库名 (或者返回空) |
+| SELECT USER( )     | 当前用户名                |
+| SHOW STATUS        | 服务器状态                |
+| SHOW VARIABLES     | 服务器配置变量            |
+
+### 重复数据
+
+#### 防止重复
+
+设置指定的字段为 **PRIMARY KEY（主键）** 或者 **UNIQUE（唯一）** 索引来保证数据的唯一性。
+
+插入重复数据时，SQL语句将无法执行成功,并抛出错。
+
+#### 插入不重复
+
+使用 **INSERT IGNORE INTO** 代替 INSERT INTO
+
+ INSERT IGNORE INTO		当数据不重复时才会插入
+
+#### 替换重复
+
+REPLACE INTO
+
+#### 统计重复
+
+将数据分组 , 不一样的数据将分为不同组 , 数据条数只有1条,则不重复
+
+```sql
+SELECT COUNT(*) as i, last_name, first_name
+    -> FROM 表名
+    -> GROUP BY last_name, first_name
+    -> HAVING i > 1;	//聚合函数中需用having代替where
+```
+
+#### 过滤重复
+
+DISTINCT
+
+```sql
+SELECT DISTINCT 列名 FROM 表名;		//重复数据只出现一条
+```
+
+#### 删除重复
+
+```sql
+//创建一张新表
+CREATE TABLE 新表 SELECT 字段1,字段2... FROM 旧表  GROUP BY (字段1,字段2...);
+//删除旧表
+DROP TABLE 旧表;
+//重命名新表为旧表
+ALTER TABLE 新表 RENAME TO 旧表;
+```
+
+其他方法 : 添加 INDEX（索引） 和 PRIMAY KEY（主键）删除重复记录
+
+```sql
+ALTER IGNORE TABLE 表名 ADD PRIMARY KEY (字段1, 字段2);
+```
+
+
+
+## 导出数据
+
+### 实例
+
+```sql
+mysqldump -u 用户名 -p 密码 表名 > dump.txt
+password *****
+```
 
