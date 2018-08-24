@@ -1,118 +1,3 @@
-
-
-### 函数
-
-#### 匹配的个数
-
-**COUNT(列名)**
-
-##### 实例
-
-```sql
-SELECT COUNT(a) FROM 表名
-WHERE site_id=3;					//返回 site_id=3 且列名为 a 的数据个数
-
-SELECT COUNT(*) FROM 表名;			//返回表中的记录数
-```
-
-#### 指定列第一个值
-
-**LIMIT 1**
-
-##### 实例
-
-```sql
-SELECT 列名 FROM 表名 LIMIT 2;		  //返回前两行数据
-```
-
-#### 最大值,最小值,求和,平均值
-
-**max(列名)**  **min(列名)**  **sum(列名)**  **AVG(列名)**
-
-##### 实例
-
-```sql
-SELECT max(列名) FROM 表名;		  //返回该列最大值
-SELECT min(列名) FROM 表名;		  //返回该列最小值
-SELECT sum(列名) FROM 表名;		  //返回该列数值总和
-SELECT avg(列名) FROM 表名;		  //返回该列所有数据的平均值
-```
-
-#### 大小写
-
-**UCASE()**  **LCASE()**
-
-##### 实例
-
-```sql
-SELECT UCASE(列) FROM 表名;		//将该列数据输出为大写,不会改变数据库
-SELECT LCASE(列) FROM 表名;		//将该列数据输出为小写,不会改变数据库
-```
-
-#### 字符串截取输出
-
-**MID(列名,起始位置,长度)**
-
-##### 实例
-
-```sql
-SELECT MID(列名,start[,length]) FROM 表名;	
-//start	 必需。规定开始位置（起始值是 1）。
-//length 可选。要返回的字符数。如果省略，则 MID() 函数返回剩余文本。
-例:mid(列名,1,4)		//该列值为'GOOGLE'的数据,输出为'GOOG'
-```
-
-#### 数据字符个数
-
-**LENGTH(列名)**
-
-##### 实例
-
-```sql
-SELECT LENGTH(列名) FROM 表名;
-SELECT id,LENGTH(url) FROM 表;	//返回该id的url字符长度
-```
-
-#### 四舍五入
-
-**ROUND(列名,小数位数)**
-
-##### 实例
-
-```sql
-SELECT ROUND(列名,小数位数) FROM 表名;	//返回该列数据并四舍五入
-```
-
-#### 当前时间
-
-**NOW()**
-
-------------
-
-#### 格式化字段
-
-**format(列名,格式)**
-
-##### 实例
-
-```sql
-DATE_FORMAT(Now(),'%Y-%m-%d') as date	//返回2018-08-18
-```
-
-
-
-#### 多表连接
-
-**GROUP BY**
-
----------------------
-
-##### having
-
-当使用聚合函数时 , 需使用 having 代替 where
-
-
-
 ## 数据类型
 
 ### Text 类型：
@@ -165,16 +50,117 @@ int（3）显示结果为010
 
 *即便 DATETIME 和 TIMESTAMP 返回相同的格式，它们的工作方式很不同。在 INSERT 或 UPDATE 查询中，TIMESTAMP 自动把自身设置为当前的日期和时间。TIMESTAMP 也接受不同的格式，比如 YYYYMMDDHHMMSS、YYMMDDHHMMSS、YYYYMMDD 或 YYMMDD。
 
+## 建表
+
+### 唯一约束
+
+**UNIQUE** 
+
+对字段加了唯一约束后，字段中数据不可出现重复（当值为null可出现重复）
+
+```sql
+CREATE TABLE 表名
+(
+P_Id int NOT NULL,
+LastName varchar(255) NOT NULL
+UNIQUE (P_Id)
+)
+```
+
+### 非空约束
+
+**NOT NULL**
+
+指示某列不能存储 NULL 值。
+
+### 主键约束
+
+**PRIMARY KEY**
+
+非空约束 和 唯一约束的结合。确保某列（或两个列多个列的结合）有唯一标识
+
+```sql
+CREATE TABLE 表名
+(
+P_Id int NOT NULL,
+LastName varchar(255) NOT NULL
+PRIMARY KEY (P_Id)
+)
+```
+
+### 默认值
+
+**DEFAULT** 
+
+规定没有给列赋值时的默认值。
+
+```sql
+CREATE TABLE Persons
+(
+    P_Id int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    City varchar(255) DEFAULT 'Sandnes'
+)
+```
+
+### 检查约束
+
+**CHECK** 
+
+保证列中的值符合指定的条件。(mysql不支持)
+
+### 外键约束
+
+**FOREIGN KEY** (字段) **REFERENCES** 关联表名(字段)
+
+保证一个表中的数据匹配另一个表中的值的参照完整性。
+
+​	外键需要是其他表的主键
+
+```sql
+CREATE TABLE Orders
+(
+O_Id int NOT NULL,
+OrderNo int NOT NULL,
+P_Id int,
+PRIMARY KEY (O_Id),
+FOREIGN KEY (P_Id) REFERENCES Persons(P_Id)
+)
+```
+
+撤销外键
+
+```sql
+ALTER TABLE Orders
+DROP FOREIGN KEY fk_PerOrders
+```
+
+### 自动增长
+
+Auto_increment 会在新记录插入表中时生成一个唯一的数字。
+
+```sqlk
+CREATE TABLE Persons
+(
+ID int NOT NULL AUTO_INCREMENT
+PRIMARY KEY (ID)
+)
+
+//把 "Persons" 表中的 "ID" 列定义为 auto_increment 主键字段
+```
+
 ## 插入
 
 **insert into**
 
-### 实例
+实例
 
 ```sql
 INSERT INTO 表名 (列名1, 列名2, 列名3, ...)
 VALUES ('值1','值2','值3',...);
 ```
+
+ **INSERT IGNORE INTO**		当没有重复数据时才会插入
 
 
 
@@ -182,7 +168,7 @@ VALUES ('值1','值2','值3',...);
 
 **Delete** from 表名  Where 条件语句
 
-### 实例
+实例
 
 ```sql
 DELETE FROM Websites
@@ -195,7 +181,7 @@ WHERE name='百度' AND country='CN';
 
 **UPDATE 表名 Set** 语句用于更新表中的记录。
 
-### 实例
+实例
 
 ```sql
 UPDATE Websites 
@@ -211,6 +197,7 @@ WHERE name='菜鸟教程';
 **SELECT 列名 FROM 表名 [where]\[LIMIT N][offset M]**
 
 - 使用星号（*），SELECT语句会返回表的所有字段数据
+- SELECT DISTINCT 结果集不会出现重复数据,重复数据只出现一条
 - WHERE 语句来包含任何条件。
   - 使用 AND 或者 OR 指定一个或多个条件。
   - 操作符 "<="  ">="  "="  "!=" "<" ">"
@@ -218,13 +205,58 @@ WHERE name='菜鸟教程';
 - LIMIT 属性来设定返回的记录数。
 - OFFSET指定SELECT语句开始查询的数据偏移量。默认情况下偏移量为0。
 
+### where
+
+WHERE 子句用于过滤记录。
+
+实例
+
+```sql
+下面的 SQL 语句从 "Websites" 表中选取国家为 "CN" 的所有网站：
+SELECT * FROM Websites WHERE country='CN';
+
+多个条件用 and 连接
+SELECT * FROM Websites WHERE
+alexa > 15 AND (country='CN' OR country='USA');
+```
+
 ### where子句
+
+#### 规定多个值
+
+**IN** 操作符允许您在 WHERE 子句中规定多个值。
+
+实例
+
+```sql
+SELECT * FROM Websites
+WHERE name IN ('Google','菜鸟教程');
+//句选取 name 为 "Google" 或 "菜鸟教程" 的数据
+```
+
+#### 两个值之间的数据
+
+**BETWEEN** 操作符选取介于两个值之间的数据范围内的值。这些值可以是数值、文本或者日期。
+
+实例
+
+```sql
+SELECT * FROM Websites
+WHERE alexa BETWEEN 1 AND 20;
+//选取 alexa 介于 1 和 20 之间的所有数据
+//NOT BETWEEN 表示不在此范围内
+
+SELECT * FROM Websites
+WHERE (alexa BETWEEN 1 AND 20)
+AND NOT country IN ('USA', 'IND');
+//选取alexa介于 1 和 20 之间但 country 不为 USA 和 IND 的数据
+```
 
 #### 区分大小写
 
 **WHERE BINARY** 
 
-##### 实例
+实例
 
 ```sql
 SELECT * from runoob_tbl WHERE BINARY runoob_author='runoob.com';
@@ -240,7 +272,7 @@ SELECT * from runoob_tbl WHERE BINARY runoob_author='RUNOOB.COM';
 
 #### like 模糊匹配
 
-##### 实例
+实例
 
 ```sql
 SELECT * from runoob_tbl  WHERE runoob_author LIKE '%COM';
@@ -258,9 +290,16 @@ SELECT * from runoob_tbl  WHERE runoob_author LIKE '%COM';
 'a_'     //两位且开头字母是a的
 ```
 
+| 通配符                       | 描述                       |
+| ---------------------------- | -------------------------- |
+| %                            | 替代 0 个或多个字符        |
+| _                            | 替代一个字符               |
+| [*charlist*]                 | 字符列中的任何单一字符     |
+| [^*charlist*]或[!*charlist*] | 不在字符列中的任何单一字符 |
+
 #### REGEXP 正则匹配
 
-##### 实例
+实例
 
 ```sql
 SELECT * from runoob_tbl  WHERE runoob_author REGEXP '^st';
@@ -286,7 +325,7 @@ SELECT * from runoob_tbl  WHERE runoob_author REGEXP '^st';
 - **RIGHT JOIN（右连接）：** 与 LEFT JOIN 相反，用于获取右表所有记录，即使左表没有对应匹配的记录。
 - 使用以上命令时, where 应换成 on
 
-##### 实例
+实例
 
 ```sql
 A表
@@ -315,7 +354,7 @@ SELECT a.runoob_id, a.runoob_author, b.runoob_count FROM runoob_tbl a INNER JOIN
 SELECT a.runoob_id, a.runoob_author, b.runoob_count FROM runoob_tbl a, tcount_tbl b WHERE a.runoob_author = b.runoob_author;
 ```
 
-### null值查询
+#### null值查询
 
 查询null值不可以使用 = 和 !=
 
@@ -323,7 +362,7 @@ SELECT a.runoob_id, a.runoob_author, b.runoob_count FROM runoob_tbl a, tcount_tb
 - **IS NOT NULL:** 当列的值不为 NULL, 运算符返回 true。
 - **<=>:** 比较操作符（不同于=运算符），当比较的的两个值为 NULL 时返回 true。
 
-#### 实例
+实例
 
 ```sql
 SELECT * FROM runoob_test_tbl WHERE runoob_count = NULL;	//不起作用
@@ -343,7 +382,7 @@ SELECT * from runoob_test_tbl WHERE runoob_count IS NOT NULL;
 
 **union all** 	结果集全部数据
 
-##### 实例
+实例
 
 ```sql
 SELECT country FROM Websites
@@ -357,7 +396,7 @@ SELECT country FROM apps
 
 **order by**
 
-##### 实例
+实例
 
 ```sql
 SELECT * from tab ORDER BY a_data ASC;	//升序
@@ -372,7 +411,7 @@ SELECT  列名,[函数()]  FROM  表名 **group by**  列名
 + 函数为可选参数 , 可以操作分组结果集数据
 + 汇总数据WITH ROLLUP (可选)
 
-##### 实例
+实例
 
 ```sql
 +----+--------+---------------------+--------+
@@ -415,6 +454,22 @@ SELECT coalesce(name, '总数'), COUNT(*) FROM  tb group by name WITH ROLLUP;	//
 | 总数 |	      6	|
 +--------+----------+
 
+```
+
+#### 结果集字段别名
+
+可以为表名称或列名称或字段名或函数名指定别名。
+
+实例
+
+```sql
+SELECT column_name(s)
+FROM table_name AS alias_name;
+//表名起别名为'alias_name'
+
+SELECT column_name AS '中文name'
+FROM table_name;
+//列名起别名为'中文name'
 ```
 
 
@@ -476,7 +531,7 @@ ALTER TABLE 表名 ENGINE = MYISAM; //例
 
 临时表只在当前连接可见，当关闭连接时，Mysql会自动删除表并释放所有空间。
 
-#### 实例
+实例
 
 ```sql
 CREATE TEMPORARY TABLE 表名 (字段);		//创建临时表
@@ -485,7 +540,7 @@ DROP TABLE 表名;						//删除表
 
 ### 复制表
 
-#### 实例
+实例
 
 ```sql
 //第一步读取表属性
@@ -580,10 +635,125 @@ ALTER IGNORE TABLE 表名 ADD PRIMARY KEY (字段1, 字段2);
 
 ## 导出数据
 
-### 实例
+实例
 
 ```sql
 mysqldump -u 用户名 -p 密码 表名 > dump.txt
 password *****
 ```
+
+
+
+## 函数
+
+### 聚合函数
+
+#### 匹配的个数
+
+**COUNT(列名)**
+
+实例
+
+```sql
+SELECT COUNT(a) FROM 表名
+WHERE site_id=3;					//返回 site_id=3 且列名为 a 的数据个数
+
+SELECT COUNT(*) FROM 表名;			//返回表中的记录数
+```
+
+#### 规定返回数量
+
+**LIMIT 1**
+
+实例
+
+```sql
+SELECT 列名 FROM 表名 LIMIT 2;		  //返回前两行数据
+```
+
+#### 最大值,最小值,求和,平均值
+
+**max(列名)**  **min(列名)**  **sum(列名)**  **AVG(列名)**
+
+实例
+
+```sql
+SELECT max(列名) FROM 表名;		  //返回该列最大值
+SELECT min(列名) FROM 表名;		  //返回该列最小值
+SELECT sum(列名) FROM 表名;		  //返回该列数值总和
+SELECT avg(列名) FROM 表名;		  //返回该列所有数据的平均值
+```
+
+### 标准函数
+
+#### 大小写
+
+**UCASE()**  **LCASE()**
+
+实例
+
+```sql
+SELECT UCASE(列) FROM 表名;		//将该列数据输出为大写,不会改变数据库
+SELECT LCASE(列) FROM 表名;		//将该列数据输出为小写,不会改变数据库
+```
+
+#### 字符串截取输出
+
+**MID(列名,起始位置,长度)**
+
+实例
+
+```sql
+SELECT MID(列名,start[,length]) FROM 表名;	
+//start	 必需。规定开始位置（起始值是 1）。
+//length 可选。要返回的字符数。如果省略，则 MID() 函数返回剩余文本。
+例:mid(列名,1,4)		//该列值为'GOOGLE'的数据,输出为'GOOG'
+```
+
+
+
+#### 数据字符个数
+
+**LENGTH(列名)**
+
+实例
+
+```sql
+SELECT LENGTH(列名) FROM 表名;
+SELECT id,LENGTH(url) FROM 表;	//返回该id的url字符长度
+```
+
+#### 四舍五入
+
+**ROUND(列名,小数位数)**
+
+实例
+
+```sql
+SELECT ROUND(列名,小数位数) FROM 表名;	//返回该列数据并四舍五入
+```
+
+#### 当前时间
+
+**NOW()**
+
+------
+
+#### 格式化字段
+
+**format(列名,格式)**
+
+实例
+
+```sql
+DATE_FORMAT(Now(),'%Y-%m-%d') as date	//返回2018-08-18
+```
+
+### 分组函数
+
+**GROUP BY** 语句用于结合聚合函数，根据一个或多个列对结果集进行分组。
+
+**having**
+
+当使用聚合函数时 , 需使用 having 代替 where
 
