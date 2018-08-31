@@ -618,6 +618,7 @@ var p = new Promise(function(resolve,reject){
 p.then()  //可以传一个或两个参数，回调函数，分别是resolve()与reject（）
 
 p.then(function(data){},function(err){})
+//只会调用其中一个函数,不是成功就是失败
 ```
 
 解决嵌套问题
@@ -633,6 +634,67 @@ p.then(function(data){
 })
 .then()    //这一行就是执行完p的then函数，再执行p2的then函数，还能在括号后继续 .then()方法
 ```
+
+## async
+
+可以让一个方法变成异步方法
+
+```js
+function fun(){
+	return "hahah"
+}
+async function fun1(){
+	return "hahah"
+}
+console.log(fun())		//hahah
+console.log(fun1())		//Promise { 'hahah' }
+fun1().then(function(data){
+	console.log(data)
+})
+```
+
+## await
+
+把异步操作变成同步
+
+await必须用在异步方法里面
+
+```js
+//错误
+async function fun(){
+	return "hahah"
+}
+var f = await fun();
+console.log(f)
+//正确
+async function fun(){
+	return "hahah"
+}
+async function fun1(){
+	var f = await fun();
+	console.log(f)
+}
+fun1();
+```
+
+promise
+
+```js
+function getdata(){
+	return new Promise(function(resolve,reject){
+		setTimeout(function(){
+			resolve("成功")
+		},100);
+	})
+}
+async function fun1(){
+	var data = await getdata();
+	console.log(data)
+}
+fun1();	//成功
+```
+
+
 
 
 
